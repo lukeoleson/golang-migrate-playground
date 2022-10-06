@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS contacts(
+    id serial PRIMARY KEY
+);
+COMMIT;
+
+CREATE TABLE IF NOT EXISTS opportunities(
+    id serial PRIMARY KEY
+    SOME INVALID SQL SYNTAX
+);
