@@ -272,7 +272,7 @@ printf '\n\n'
 # 8
 printf '--> Rerun the migration\n'
 printf '$ migrate -database $CONNECTION_STRING -path migrations up\n'
-migrate -database "$CONNECTION_STRING" -path migrations goto 6
+migrate -database "$CONNECTION_STRING" -path migrations goto 7
 printf '\n'
 
 # 9
@@ -286,6 +286,38 @@ printf '--> The database version is updated to 7 and is clean\n'
 printf 'users=# select * from schema_migrations;\n'
 echo "select * from schema_migrations;" | psql -d users
 
+#######################################################################
+printf '=============================================================\n'
+printf 'Test 6 - Make changes to a previously deployed migration file\n'
+printf '=============================================================\n'
+#######################################################################
+
+# 1
+printf '--> Modify a deployment that has already been successfully deployed\n'
+printf 'cat > migrations/000007_create_activities_table.up.sql < fixtures/000005_create_activities_table_2.up.sql\n'
+cat > migrations/000007_create_activities_table.up.sql < fixtures/000005_create_activities_table_2.up.sql
+printf '\n\n'
+
+#2
+printf '--> Apply the migrations\n'
+printf '$ migrate -database $CONNECTION_STRING -path migrations up\n'
+migrate -database "$CONNECTION_STRING" -path migrations goto 7
+printf '\n'
+
+# 3
+printf '--> The database is clean with the same version number\n'
+printf 'users=# select * from schema_migrations;\n'
+echo "select * from schema_migrations;" | psql -d users
+
+# 4
+printf '--> The activities table is unchanged"\n'
+printf 'users=# \dt\n'
+echo "select * from activities" | psql -d users
+printf '\n'
+
+# Clean up
+#cat > migrations/000007_create_activities_table.up.sql < fixtures/000005_create_activities_table.up.sql
+
 #
 # Reset everything
 #
@@ -296,5 +328,6 @@ cat > migrations/000004_create_leads_table.down.sql < fixtures/migration_4_down_
 
 migrate -database "$CONNECTION_STRING" -path migrations down -all
 echo "drop table schema_migrations;" | psql -d users
+echo "drop table leads;" | psql -d users
 
 rm migrations/000007_create_activities_table.*
