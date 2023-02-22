@@ -316,7 +316,7 @@ echo "select * from activities" | psql -d users
 printf '\n'
 
 # Clean up
-#cat > migrations/000007_create_activities_table.up.sql < fixtures/000005_create_activities_table.up.sql
+cat > migrations/000007_create_activities_table.up.sql < fixtures/000005_create_activities_table.up.sql
 
 #
 # Reset everything
